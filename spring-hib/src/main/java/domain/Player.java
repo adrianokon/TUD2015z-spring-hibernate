@@ -4,24 +4,37 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+
+import org.hibernate.annotations.Check;
+
 
 @Entity
+@NamedQueries({ 
+	@NamedQuery(name = "player.all", query = "Select p from Player p"),
+	@NamedQuery(name = "player.byCountry", query = "Select p from Player p where p.country = :country")
+})
+@Check(constraints = "ranking > 0 AND earned_money >= 0 AND wins_count >= 0")
 public class Player {
 
 @Id
 @GeneratedValue(strategy = GenerationType.AUTO)	
    private Long    id;
+@Column(unique = true, nullable = false)
    private String  nick;
    private String  country;
    private Integer ranking;
-   private Double  earned_money;
-   private Integer wins_count;
+   private Double  earned_money = 0.0;
+   private Integer wins_count = 0;
    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
    private List<Tournament> tournaments = new ArrayList<Tournament>();
 

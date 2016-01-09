@@ -21,4 +21,7 @@ public interface TournamentManager {
 	List<Place> getAllPlaces();
 	void disposePlace(Place place, Tournament tournament);
 	Place findPlaceById(Long id);
+	
+	void signUpPlayer(Player player, Tournament tournament);
+	void addTournamentToPlace(Tournament tournament, Place place);
 }

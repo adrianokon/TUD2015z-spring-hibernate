@@ -10,8 +10,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import javax.persistence.NamedQuery;
 
+import org.hibernate.annotations.Check;
+@NamedQuery(name = "tournament.all", query = "Select t from Tournament t")
 @Entity
+@Check(constraints = "entry_fee >= 0 AND win >= 0")
 public class Tournament {
 
 	@Id
