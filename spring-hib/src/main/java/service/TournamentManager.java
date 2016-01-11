@@ -19,7 +19,7 @@ public interface TournamentManager {
 	
 	Long addNewPlace(Place place);
 	List<Place> getAllPlaces();
-	void disposePlace(Place place, Tournament tournament);
+	void deletePlace(Place place);
 	Place findPlaceById(Long id);
 	
 	void signUpPlayer(Player player, Tournament tournament);

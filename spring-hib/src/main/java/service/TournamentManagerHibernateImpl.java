@@ -45,7 +45,6 @@ public class TournamentManagerHibernateImpl implements TournamentManager{
 		player = (Player) sessionFactory.getCurrentSession().get(Player.class,
 				player.getId());
 		
-		// lazy loading here
 		for (Tournament t : player.getTournaments()) {
 			t.getPlayers().remove(player);
 			sessionFactory.getCurrentSession().update(t);
@@ -77,7 +76,6 @@ public class TournamentManagerHibernateImpl implements TournamentManager{
 		tournament = (Tournament) sessionFactory.getCurrentSession().get(Tournament.class,
 				tournament.getId());
 		
-		// lazy loading here
 		for (Player p : tournament.getPlayers()) {
 			p.getTournaments().remove(tournament);
 			sessionFactory.getCurrentSession().update(p);
@@ -106,12 +104,14 @@ public class TournamentManagerHibernateImpl implements TournamentManager{
 	}
 
 	@Override
-	public void disposePlace(Place place, Tournament tournament) {
+	public void deletePlace(Place place) {
 		place = (Place) sessionFactory.getCurrentSession().get(Place.class,
 				place.getId());
 	
-		place.getTournaments().remove(tournament);
-		sessionFactory.getCurrentSession().update(place);
+		for(Tournament t:place.getTournaments()){
+			place.getTournaments().remove(t);
+		}
+		sessionFactory.getCurrentSession().delete(place);
 	}
 
 	@Override
