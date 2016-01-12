@@ -27,28 +27,52 @@ public class TMTournamentTest {
 	TournamentManager tournamentManager;
 
 	private List<Tournament> tournamentBackup;
+	private List<Place> placeBackup;
 
 	@Before
 	public void dbBackup() {
 		tournamentBackup = tournamentManager.getAllTournaments();
+		placeBackup = tournamentManager.getAllPlaces();
+
+		// ewentualne usuniecie danych testowych
+		// turniejow testName i testName2
+		// oraz miejsc testName i testName2
+		for (Tournament t : tournamentManager.getAllTournaments()) {
+			if (t.getName().equals("testName") || t.getName().equals("testName2")) {
+				tournamentManager.deleteTournament(t);
+			}
+		}
+		for (Place p : tournamentManager.getAllPlaces()) {
+			if (p.getName().equals("testName") || p.getName().equals("testName2")) {
+				p.getTournaments().clear();
+				tournamentManager.deletePlace(p);
+			}
+		}
 	}
 
 	@After
 	public void dbRestore() {
 		// usuwanie wszystkich rekordów z bazy
 		for (Place p : tournamentManager.getAllPlaces()) {
+			p.getTournaments().clear();
 			tournamentManager.deletePlace(p);
+		}
+		for (Tournament t : tournamentManager.getAllTournaments()) {
+			tournamentManager.deleteTournament(t);
 		}
 
 		// odtworzenie rekordów z backupu
 		for (Tournament t : tournamentBackup) {
 			tournamentManager.addNewTournament(t);
 		}
+		for (Place p : placeBackup) {
+			tournamentManager.addNewPlace(p);
+		}
 	}
 
 	@Test
 	public void addTournamentTest() {
-		String testName = "test";
+		String testName = "testName";
 		List<Tournament> retrievedTournaments = tournamentManager.getAllTournaments();
 
 		for (Tournament p : retrievedTournaments) {
@@ -76,18 +100,18 @@ public class TMTournamentTest {
 
 	@Test
 	public void getAllTournamentsTest() {
-		String testNick = "test";
+		String testName = "testName";
 		List<Tournament> retrievedTournaments = tournamentManager.getAllTournaments();
 
 		for (Tournament p : retrievedTournaments) {
-			if (p.getName().equals(testNick)) {
+			if (p.getName().equals(testName)) {
 				tournamentManager.deleteTournament(p);
 				break;
 			}
 		}
 
 		Tournament tournament = new Tournament();
-		tournament.setName(testNick);
+		tournament.setName(testName);
 		tournament.setEntry_fee(100.0);
 		tournament.setWin(10000.0);
 		tournamentManager.addNewTournament(tournament);
@@ -98,15 +122,20 @@ public class TMTournamentTest {
 
 	@Test
 	public void deleteTournament() {
-		String testName = "test";
+		String testName = "testName";
 		List<Tournament> retrievedTournaments = tournamentManager.getAllTournaments();
 		Tournament tournament;
 
-		if (retrievedTournaments.isEmpty()) {
+		if (retrievedTournaments.isEmpty() || retrievedTournaments.size() == 1) {
 			tournament = new Tournament();
 			tournament.setName(testName);
 			tournament.setEntry_fee(100.0);
 			tournament.setWin(102131.0);
+			tournamentManager.addNewTournament(tournament);
+			tournament = new Tournament();
+			tournament.setName("testName2");
+			tournament.setEntry_fee(460.0);
+			tournament.setWin(7312.0);
 			tournamentManager.addNewTournament(tournament);
 
 			tournament = tournamentManager.getAllTournaments().get(0);
@@ -154,4 +183,43 @@ public class TMTournamentTest {
 		assertTrue(tournament.getName().equals(actualTournament.getName()));
 	}
 
+	@Test
+	public void addTournamentToPlaceTest() {
+		Tournament tournament;
+
+		tournament = new Tournament();
+		tournament.setName("testName");
+		tournament.setEntry_fee(100.0);
+		tournament.setWin(102131.0);
+		tournamentManager.addNewTournament(tournament);
+		tournament = new Tournament();
+		tournament.setName("testName2");
+		tournament.setEntry_fee(460.0);
+		tournament.setWin(7312.0);
+		tournamentManager.addNewTournament(tournament);
+
+		tournament = tournamentManager.getAllTournaments().get(0);
+
+		Place place;
+
+		place = new Place();
+		place.setName("testName");
+		place.setCountry("abcd");
+		place.setCity("foo");
+		tournamentManager.addNewPlace(place);
+		place = new Place();
+		place.setName("testName2");
+		place.setCountry("Polska");
+		place.setCity("foofoo");
+		tournamentManager.addNewPlace(place);
+
+		place = tournamentManager.getAllPlaces().get(0);
+
+		tournamentManager.addTournamentToPlace(tournament, place);
+
+		Place actualPlace = tournamentManager.findPlaceById(place.getId());
+		Tournament actualTournament = tournamentManager.findTournamentById(tournament.getId());
+
+		assertTrue(actualPlace.getTournaments().contains(actualTournament));
+	}
 }

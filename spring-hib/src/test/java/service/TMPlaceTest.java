@@ -30,6 +30,14 @@ public class TMPlaceTest {
 	@Before
 	public void dbBackup() {
 		placeBackup = tournamentManager.getAllPlaces();
+
+		// ewentualne usuniecie danych testowych
+		// miejsc testName i testName2
+		for (Place p : tournamentManager.getAllPlaces()) {
+			if (p.getName().equals("testName") || p.getName().equals("testName2")) {
+				tournamentManager.deletePlace(p);
+			}
+		}
 	}
 
 	@After
@@ -47,25 +55,25 @@ public class TMPlaceTest {
 
 	@Test
 	public void addPlaceTest() {
-		String testNick = "test";
+		String testName = "testName";
 		List<Place> retrievedPlaces = tournamentManager.getAllPlaces();
 
 		for (Place p : retrievedPlaces) {
-			if (p.getName().equals(testNick)) {
+			if (p.getName().equals(testName)) {
 				tournamentManager.deletePlace(p);
 				break;
 			}
 		}
 
 		Place place = new Place();
-		place.setName(testNick);
+		place.setName(testName);
 		place.setCountry("abcd");
 		place.setCity("foo");
 		tournamentManager.addNewPlace(place);
 
 		boolean namePresent = false;
 		for (Place p : tournamentManager.getAllPlaces()) {
-			if (p.getName().equals(testNick)) {
+			if (p.getName().equals(testName)) {
 				namePresent = true;
 				break;
 			}
@@ -75,7 +83,7 @@ public class TMPlaceTest {
 
 	@Test
 	public void getAllPlacesTest() {
-		String testName = "test";
+		String testName = "testName";
 		List<Place> retrievedPlaces = tournamentManager.getAllPlaces();
 
 		for (Place p : retrievedPlaces) {
@@ -97,25 +105,30 @@ public class TMPlaceTest {
 
 	@Test
 	public void deletePlace() {
-		String testName = "test";
+		String testName = "testName";
 		List<Place> retrievedPlaces = tournamentManager.getAllPlaces();
-		Place player;
+		Place place;
 
-		if (retrievedPlaces.isEmpty()) {
-			player = new Place();
-			player.setName(testName);
-			player.setCountry("abcd");
-			player.setCity("foo");
-			tournamentManager.addNewPlace(player);
+		if (retrievedPlaces.isEmpty() || retrievedPlaces.size() == 1) {
+			place = new Place();
+			place.setName(testName);
+			place.setCountry("abcd");
+			place.setCity("foo");
+			tournamentManager.addNewPlace(place);
+			place = new Place();
+			place.setName("testName2");
+			place.setCountry("Polska");
+			place.setCity("foofoo");
+			tournamentManager.addNewPlace(place);
 
-			player = tournamentManager.getAllPlaces().get(0);
+			place = tournamentManager.getAllPlaces().get(0);
 		} else {
-			player = retrievedPlaces.get(0);
-			testName = player.getName();
+			place = retrievedPlaces.get(0);
+			testName = place.getName();
 		}
 
 		retrievedPlaces = tournamentManager.getAllPlaces();
-		tournamentManager.deletePlace(player);
+		tournamentManager.deletePlace(place);
 		List<Place> actualPlaces = tournamentManager.getAllPlaces();
 		// sprawdza czy usunęliśmy tylko 1 rekord
 		assertTrue(actualPlaces.size() == retrievedPlaces.size() - 1);
