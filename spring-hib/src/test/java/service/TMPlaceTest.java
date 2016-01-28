@@ -56,14 +56,6 @@ public class TMPlaceTest {
 	@Test
 	public void addPlaceTest() {
 		String testName = "testName";
-		List<Place> retrievedPlaces = tournamentManager.getAllPlaces();
-
-		for (Place p : retrievedPlaces) {
-			if (p.getName().equals(testName)) {
-				tournamentManager.deletePlace(p);
-				break;
-			}
-		}
 
 		Place place = new Place();
 		place.setName(testName);
@@ -85,13 +77,6 @@ public class TMPlaceTest {
 	public void getAllPlacesTest() {
 		String testName = "testName";
 		List<Place> retrievedPlaces = tournamentManager.getAllPlaces();
-
-		for (Place p : retrievedPlaces) {
-			if (p.getName().equals(testName)) {
-				tournamentManager.deletePlace(p);
-				break;
-			}
-		}
 
 		Place place = new Place();
 		place.setName(testName);
@@ -122,8 +107,9 @@ public class TMPlaceTest {
 			tournamentManager.addNewPlace(place);
 
 			place = tournamentManager.getAllPlaces().get(0);
+			testName = place.getName();
 		} else {
-			place = retrievedPlaces.get(0);
+			place = tournamentManager.getAllPlaces().get(0);
 			testName = place.getName();
 		}
 
@@ -159,7 +145,7 @@ public class TMPlaceTest {
 
 			place = tournamentManager.getAllPlaces().get(0);
 		} else {
-			place = retrievedPlaces.get(0);
+			place = tournamentManager.getAllPlaces().get(0);
 		}
 
 		Place actualPlace = tournamentManager.findPlaceById(place.getId());

@@ -2,6 +2,7 @@ package service;
 
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.After;
@@ -71,14 +72,6 @@ public class TMPlayerTest {
 	@Test
 	public void addPlayerTest() {
 		String testNick = "testNick";
-		List<Player> retrievedPlayers = tournamentManager.getAllPlayers();
-
-		for (Player p : retrievedPlayers) {
-			if (p.getNick().equals(testNick)) {
-				tournamentManager.deletePlayer(p);
-				break;
-			}
-		}
 
 		Player player = new Player();
 		player.setNick(testNick);
@@ -102,13 +95,6 @@ public class TMPlayerTest {
 	public void getAllPlayersTest() {
 		String testNick = "testNick";
 		List<Player> retrievedPlayers = tournamentManager.getAllPlayers();
-
-		for (Player p : retrievedPlayers) {
-			if (p.getNick().equals(testNick)) {
-				tournamentManager.deletePlayer(p);
-				break;
-			}
-		}
 
 		Player player = new Player();
 		player.setNick(testNick);
@@ -145,8 +131,9 @@ public class TMPlayerTest {
 			tournamentManager.addNewPlayer(player);
 
 			player = tournamentManager.getAllPlayers().get(0);
+			testNick = player.getNick();
 		} else {
-			player = retrievedPlayers.get(0);
+			player = tournamentManager.getAllPlayers().get(0);
 			testNick = player.getNick();
 		}
 
@@ -186,7 +173,7 @@ public class TMPlayerTest {
 
 			player = tournamentManager.getAllPlayers().get(0);
 		} else {
-			player = retrievedPlayers.get(0);
+			player = tournamentManager.getAllPlayers().get(0);
 		}
 
 		Player actualPlayer = tournamentManager.findPlayerById(player.getId());
@@ -203,7 +190,7 @@ public class TMPlayerTest {
 		player.setEarned_money(100.0);
 		player.setRanking(10);
 		player.setWins_count(3);
-		tournamentManager.addNewPlayer(player);
+		Long pom = tournamentManager.addNewPlayer(player);
 		player = new Player();
 		player.setNick("testNick2");
 		player.setCountry("Polska");
@@ -212,7 +199,7 @@ public class TMPlayerTest {
 		player.setWins_count(5);
 		tournamentManager.addNewPlayer(player);
 
-		player = tournamentManager.getAllPlayers().get(0);
+		player = tournamentManager.findPlayerById(pom);
 
 		Tournament tournament;
 
@@ -220,14 +207,14 @@ public class TMPlayerTest {
 		tournament.setName("testName");
 		tournament.setEntry_fee(100.0);
 		tournament.setWin(1021321.0);
-		tournamentManager.addNewTournament(tournament);
+		pom = tournamentManager.addNewTournament(tournament);
 		tournament = new Tournament();
 		tournament.setName("testName2");
 		tournament.setEntry_fee(460.0);
 		tournament.setWin(7312.0);
 		tournamentManager.addNewTournament(tournament);
 
-		tournament = tournamentManager.getAllTournaments().get(0);
+		tournament = tournamentManager.findTournamentById(pom);
 
 		tournamentManager.signUpPlayer(player, tournament);
 
@@ -265,7 +252,16 @@ public class TMPlayerTest {
 		player.setWins_count(8);
 		tournamentManager.addNewPlayer(player);
 
+		List<Player> tmpPlayers = new ArrayList<Player>();
+		for (Player p : tournamentManager.getAllPlayers()) {
+			if (p.getCountry().equals("Polska")) {
+				tmpPlayers.add(p);
+			}
+		}
+
 		List<Player> listPlayers = tournamentManager.getPlayersByCountry("Polska");
+		assertTrue(tmpPlayers.size() == listPlayers.size());
+
 		for (Player p : listPlayers) {
 			if (!p.getCountry().equals("Polska")) {
 				assertTrue(false);

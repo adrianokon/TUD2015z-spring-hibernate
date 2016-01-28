@@ -73,14 +73,6 @@ public class TMTournamentTest {
 	@Test
 	public void addTournamentTest() {
 		String testName = "testName";
-		List<Tournament> retrievedTournaments = tournamentManager.getAllTournaments();
-
-		for (Tournament p : retrievedTournaments) {
-			if (p.getName().equals(testName)) {
-				tournamentManager.deleteTournament(p);
-				break;
-			}
-		}
 
 		Tournament tournament = new Tournament();
 		tournament.setName(testName);
@@ -102,13 +94,6 @@ public class TMTournamentTest {
 	public void getAllTournamentsTest() {
 		String testName = "testName";
 		List<Tournament> retrievedTournaments = tournamentManager.getAllTournaments();
-
-		for (Tournament p : retrievedTournaments) {
-			if (p.getName().equals(testName)) {
-				tournamentManager.deleteTournament(p);
-				break;
-			}
-		}
 
 		Tournament tournament = new Tournament();
 		tournament.setName(testName);
@@ -139,8 +124,9 @@ public class TMTournamentTest {
 			tournamentManager.addNewTournament(tournament);
 
 			tournament = tournamentManager.getAllTournaments().get(0);
+			testName = tournament.getName();
 		} else {
-			tournament = retrievedTournaments.get(0);
+			tournament = tournamentManager.getAllTournaments().get(0);
 			testName = tournament.getName();
 		}
 
@@ -176,7 +162,7 @@ public class TMTournamentTest {
 
 			tournament = tournamentManager.getAllTournaments().get(0);
 		} else {
-			tournament = retrievedTournaments.get(0);
+			tournament = tournamentManager.getAllTournaments().get(0);
 		}
 
 		Tournament actualTournament = tournamentManager.findTournamentById(tournament.getId());
@@ -191,14 +177,14 @@ public class TMTournamentTest {
 		tournament.setName("testName");
 		tournament.setEntry_fee(100.0);
 		tournament.setWin(102131.0);
-		tournamentManager.addNewTournament(tournament);
+		Long pom = tournamentManager.addNewTournament(tournament);
 		tournament = new Tournament();
 		tournament.setName("testName2");
 		tournament.setEntry_fee(460.0);
 		tournament.setWin(7312.0);
 		tournamentManager.addNewTournament(tournament);
 
-		tournament = tournamentManager.getAllTournaments().get(0);
+		tournament = tournamentManager.findTournamentById(pom);
 
 		Place place;
 
@@ -206,14 +192,14 @@ public class TMTournamentTest {
 		place.setName("testName");
 		place.setCountry("abcd");
 		place.setCity("foo");
-		tournamentManager.addNewPlace(place);
+		pom = tournamentManager.addNewPlace(place);
 		place = new Place();
 		place.setName("testName2");
 		place.setCountry("Polska");
 		place.setCity("foofoo");
 		tournamentManager.addNewPlace(place);
 
-		place = tournamentManager.getAllPlaces().get(0);
+		place = tournamentManager.findPlaceById(pom);
 
 		tournamentManager.addTournamentToPlace(tournament, place);
 
