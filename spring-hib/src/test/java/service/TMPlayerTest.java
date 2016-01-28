@@ -268,4 +268,50 @@ public class TMPlayerTest {
 			}
 		}
 	}
+
+	@Test
+	public void getTournamentsByPlayerTest() {
+		Player player;
+
+		player = new Player();
+		player.setNick("testNick");
+		player.setCountry("abcd");
+		player.setEarned_money(100.0);
+		player.setRanking(10);
+		player.setWins_count(3);
+		Long pom = tournamentManager.addNewPlayer(player);
+		player = new Player();
+		player.setNick("testNick2");
+		player.setCountry("Polska");
+		player.setEarned_money(460.0);
+		player.setRanking(7);
+		player.setWins_count(5);
+		tournamentManager.addNewPlayer(player);
+
+		player = tournamentManager.findPlayerById(pom);
+
+		Tournament tournament;
+
+		tournament = new Tournament();
+		tournament.setName("testName");
+		tournament.setEntry_fee(100.0);
+		tournament.setWin(1021321.0);
+		pom = tournamentManager.addNewTournament(tournament);
+		tournament = new Tournament();
+		tournament.setName("testName2");
+		tournament.setEntry_fee(460.0);
+		tournament.setWin(7312.0);
+		tournamentManager.addNewTournament(tournament);
+
+		tournament = tournamentManager.findTournamentById(pom);
+
+		tournamentManager.signUpPlayer(player, tournament);
+
+		Player actualPlayer = tournamentManager.findPlayerById(player.getId());
+		Tournament actualTournament = tournamentManager.findTournamentById(tournament.getId());
+
+		List<Tournament> tournamentsByPlayer = tournamentManager.getTournamentsByPlayer(actualPlayer);
+		assertTrue(tournamentsByPlayer.size() == 1);
+		assertTrue(tournamentsByPlayer.contains(actualTournament));
+	}
 }

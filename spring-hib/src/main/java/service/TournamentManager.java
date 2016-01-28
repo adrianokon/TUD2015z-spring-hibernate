@@ -7,6 +7,8 @@ import domain.Player;
 import domain.Tournament;
 
 public interface TournamentManager {
+	List<Tournament> getTournamentsByPlayer(Player p);
+
 	Long addNewPlayer(Player player);
 
 	List<Player> getAllPlayers();

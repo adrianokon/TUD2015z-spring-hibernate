@@ -27,6 +27,12 @@ public class TournamentManagerHibernateImpl implements TournamentManager {
 	}
 
 	@Override
+	public List<Tournament> getTournamentsByPlayer(Player p) {
+		p = (Player) sessionFactory.getCurrentSession().get(Player.class, p.getId());
+		return p.getTournaments();
+	}
+
+	@Override
 	public Long addNewPlayer(Player player) {
 		player.setId(null);
 		sessionFactory.getCurrentSession().persist(player);
